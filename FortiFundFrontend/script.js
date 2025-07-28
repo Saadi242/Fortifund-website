@@ -207,8 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderNavbar(navbarItems);
         } catch (error) {
             console.error('Error fetching navbar items:', error);
-            // Fallback: If dynamic loading fails, the HTML will show the static navbar (if present)
-            // Or you can display an error message in the navbar area.
             if (mainNavUl) {
                 mainNavUl.innerHTML = '<li><a href="#" class="nav-link">Error loading navigation</a></li>';
             }
@@ -246,81 +244,60 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 li.appendChild(dropdownMenu);
 
-                // Re-attach dropdown toggle event listener
-                dropdownToggle.querySelector('.arrow-down').addEventListener('click', function(event) {
-                    event.preventDefault();
+                // Attach dropdown toggle event listener directly to the dropdownToggle
+                dropdownToggle.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+                    // Close any other open dropdowns first
+                    document.querySelectorAll('.dropdown-menu.show').forEach(openDropdown => {
+                        if (openDropdown !== dropdownMenu) { // Don't close self
+                            openDropdown.classList.remove('show');
+                            openDropdown.closest('.dropdown').querySelector('.dropdown-toggle').classList.remove('active'); // Remove active from its toggle
+                        }
+                    });
                     dropdownMenu.classList.toggle('show');
+                    dropdownToggle.classList.toggle('active'); // Toggle active class on the toggle itself
+                    event.stopPropagation(); // Prevent this click from immediately bubbling up to document and closing it
                 });
             } else {
                 const link = document.createElement('a');
                 link.href = item.itemHref;
                 link.textContent = item.itemText;
                 link.classList.add('nav-link');
-                if (item.itemHref === currentPagePath) {
-                    link.classList.add('current-page');
-                }
-                // Special handling for BOOK DEMO button
                 if (item.itemText === 'BOOK DEMO') { // Assuming "BOOK DEMO" is always a button
                     link.classList.add('btn', 'btn-primary');
+                }
+                // Check if this is the current page
+                if (link.href.split('/').pop() === currentPagePath) {
+                    link.classList.add('current-page');
                 }
                 li.appendChild(link);
             }
             mainNavUl.appendChild(li);
         });
 
-        // Re-attach global click listener for dropdowns (to close when clicking outside)
-        document.addEventListener('click', function(event) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(openDropdown => {
-                if (!event.target.closest('.dropdown') || !openDropdown.contains(event.target)) {
-                    openDropdown.classList.remove('show');
+        // Global click listener for dropdowns (to close when clicking outside)
+        // This listener ensures that clicking anywhere *outside* an open dropdown closes it.
+        // It's attached only once in DOMContentLoaded, so we don't need to remove/re-add it here.
+    }
+
+    // Define the global dropdown click handler once in DOMContentLoaded
+    // This function will be called for *any* click on the document.
+    document.addEventListener('click', function(event) {
+        // Find all currently open dropdown menus
+        document.querySelectorAll('.dropdown-menu.show').forEach(openDropdown => {
+            const dropdownContainer = openDropdown.closest('.dropdown'); // Get the parent <li> with class 'dropdown'
+
+            // If the click was *not* inside this specific dropdown container
+            if (dropdownContainer && !dropdownContainer.contains(event.target)) {
+                openDropdown.classList.remove('show');
+                // Also remove the 'active' class from its toggle if it has one
+                const toggle = dropdownContainer.querySelector('.dropdown-toggle');
+                if (toggle) {
+                    toggle.classList.remove('active');
                 }
-            });
-        });
-    }
-
-
-    // --- Highlight current page in navigation (REMOVED - now handled by renderNavbar) ---
-    // The previous logic for `currentPagePath` and `navLinks.forEach` is now integrated
-    // directly into `renderNavbar` to ensure dynamic links get the `current-page` class.
-    // So, this block is no longer needed:
-    /*
-    const currentPagePath = window.location.pathname.split('/').pop();
-    const navLinks = document.querySelectorAll('.main-nav .nav-link');
-    navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href');
-        if (linkPath === currentPagePath) {
-            link.classList.add('current-page');
-        } else {
-            const parentDropdown = link.closest('.dropdown');
-            if (parentDropdown && parentDropdown.querySelector('.dropdown-menu a.current-page')) {
-                parentDropdown.querySelector('.dropdown-toggle').classList.add('current-page');
             }
-        }
+        });
     });
-    */
-
-
-    // --- Dropdown Navigation (REMOVED - now handled by renderNavbar) ---
-    // The previous event listeners for `droptn` and `dropdown` are now attached
-    // directly within `renderNavbar` for dynamically created elements.
-    // So, this block is no longer needed:
-    /*
-    let droptn = document.querySelector('.arrow-down');
-    let dropdown = document.querySelector('.dropdown-menu');
-
-    if (droptn && dropdown) {
-        droptn.addEventListener('click', function(event) {
-            event.preventDefault();
-            dropdown.classList.toggle('show');
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.dropdown') && dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-            }
-        });
-    }
-    */
 
 
     // --- Contact Form Submission ---
