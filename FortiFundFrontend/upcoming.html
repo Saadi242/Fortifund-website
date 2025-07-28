@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FortiFund - Upcoming Solutions</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="main-header" class="main-header">
+    <div class="container header-content">
+        <div class="site-logo">
+            <a href="index.html">
+                <img src="assets/image/fortifund logo.jpg" alt="FortiFund Logo" class="logo-img">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <!-- Navbar items will be dynamically loaded here by script.js -->
+            <ul>
+                <!-- Placeholder for dynamic content -->
+                <li>Loading Navigation...</li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main-content">
+    <!-- Upcoming Solutions Section - Added data-section for dynamic loading -->
+    <section class="solution-section" data-section="upcoming_solutions_page">
+        <div id="upcoming" class="solution-card">
+            <!-- Added data-content-key="upcoming_title" -->
+            <h3 class="solution-title" data-content-key="upcoming_title">Upcoming Solutions (Launching Soon)</h3>
+            <!-- Added data-content-key="upcoming_description" -->
+            <p class="solution-description" data-content-key="upcoming_description">We’re building even more tools to save time and boost results. Coming soon to FortiFund:</p>
+            <ul class="bullet-list solution-features">
+                <!-- Added data-content-key for each list item -->
+                <li><strong data-content-key="upcoming_feature1_title">🧠 AI + OCR File Scanning:</strong> <span data-content-key="upcoming_feature1_description">Automatically extract key data from your documents to pre-fill intake.</span></li>
+                <li><strong data-content-key="upcoming_feature2_title">📂 Drag-and-Drop Uploads with Auto-Sorting:</strong> <span data-content-key="upcoming_feature2_description">Smarter, smoother upload experience with intelligent file labeling.</span></li>
+                <li><strong data-content-key="upcoming_feature3_title">🔔 One-Click Deal Delivery + Status Tracking:</strong> <span data-content-key="upcoming_feature3_description">Send deals directly to matched lenders and track engagement.</span></li>
+                <li><strong data-content-key="upcoming_feature4_title">💬 In-App Chat with Matched Lenders:</strong> <span data-content-key="upcoming_feature4_description">Communicate without leaving the platform.</span></li>
+            </ul>
+            <!-- Added data-content-key="upcoming_tagline" -->
+            <p class="solution-tagline" data-content-key="upcoming_tagline">💡 Want early access to new features? Let us know.</p>
+        </div>
+    </section>
+</main>
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container text-center">
+        <p>&copy; 2024 FortiFund. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+
+</footer>
+
+<!-- Custom JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+/* General Body and Font Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #ffffff; /* White background */
+    color: #374151; /* Dark gray text */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container for consistent width */
+.container {
+    max-width: 1200px; /* Equivalent to a large max-width */
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px; /* px-6 */
+    padding-right: 24px; /* px-6 */
+}
+
+/* Main Content Padding - Ensures content starts below fixed header */
+/* This will be dynamically set by JavaScript after the header renders */
+.main-content {
+    padding-top: 100px; /* Adjusted: Increased to 100px to give more clearance */
+    /* You can try values like 90px, 100px, 110px until it looks right */
+}
+
+/* --- Header Styling --- */
+.main-header {
+    background-color: #ffffff;
+    padding: 6px 0; /* Adjusted: Even smaller vertical padding for a very compact header */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure header is above other content */
+    display: flex; /* Use flexbox for vertical alignment of header content */
+    align-items: center; /* Vertically center content within the header */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+    height: auto; /* Allow height to adjust based on content */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between; /* Pushes logo to left, nav to right */
+    align-items: center; /* Vertically center items within header-content */
+    width: 100%; /* Take full width of container */
+}
+
+/* Styling for the logo image */
+.main-header .site-logo .logo-img {
+    height: auto; /* Let height be determined by width to maintain aspect ratio */
+    width: 120px; /* Adjusted: Slightly smaller width for better fit, adjust as desired */
+    max-width: 100%; /* Ensures logo scales down on smaller screens */
+    vertical-align: middle; /* Helps with alignment */
+}
+
+/* Adjust the site-logo div itself if it has fixed dimensions */
+.site-logo {
+    display: flex; /* Use flexbox to align image if it's the only content */
+    align-items: center;
+    justify-content: flex-start; /* Align logo to the left */
+}
+
+/* Navigation List Styling */
+.main-nav ul {
+    display: flex; /* Make the ul a flex container for its list items */
+    list-style: none; /* Remove bullet points */
+    margin: 0;
+    padding: 0;
+    gap: 18px; /* Adjusted: Smaller gap between nav items */
+    align-items: center; /* CRUCIAL: Vertically align all list items (links, dropdown, button) */
+}
+
+/* General Navigation Link Styling */
+.main-nav .nav-link {
+    color: #4b5563; /* text-gray-600 */
+    text-decoration: none;
+    font-weight: 500; /* font-medium */
+    padding: 4px 0; /* Adjusted: Even smaller vertical padding */
+    transition: color 0.3s ease;
+    display: flex; /* Use flexbox for internal text/arrow alignment */
+    align-items: center; /* Vertically center text/arrow within the link */
+    height: auto; /* Allow height to adjust based on padding and content */
+}
+
+.main-nav .nav-link:hover,
+.main-nav .nav-link.current-page {
+    color: #111827; /* hover:text-gray-900 */
+}
+
+/* Dropdown Specific Styling */
+.main-nav ul li.dropdown {
+    position: relative; /* Needed for absolute positioning of dropdown-menu */
+}
+
+.dropdown-menu {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #ffffff; /* White background */
+    min-width: 180px; /* Minimum width for the dropdown */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 10; /* Ensure it appears above other content */
+    border-radius: 8px; /* Rounded corners for the dropdown box */
+    overflow: hidden; /* Ensures content stays within rounded corners */
+    top: 100%; /* Position directly below the toggle link */
+    left: 0;
+    margin-top: 8px; /* Small gap between toggle and menu */
+    opacity: 0; /* For fade in/out effect */
+    visibility: hidden; /* For transition */
+    transform: translateY(10px); /* For slide down effect */
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* When the 'show' class is added by JavaScript, make it visible */
+.dropdown-menu.show {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Style for individual links within the dropdown menu */
+.dropdown-menu a {
+    color: #374151; /* Dark gray text */
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block; /* Make links take full width of dropdown item */
+    text-align: left;
+    white-space: nowrap; /* Prevent text wrapping */
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f1f1f1; /* Light gray background on hover */
+}
+
+/* ... (previous CSS code) ... */
+
+/* --- Button Styling --- */
+/* Increased specificity for .btn in the navbar */
+.main-nav .btn { /* Target buttons specifically within main-nav */
+    display: inline-flex; /* Use inline-flex for better content alignment */
+    align-items: center; /* Vertically center text/icon inside button */
+    padding: 8px 16px; /* Adjusted: Smaller padding for a more compact button */
+    font-size: 0.9rem; /* Slightly smaller font size */
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: none; /* Remove default button border */
+    white-space: nowrap; /* Prevent text wrap */
+    line-height: 1; /* Ensures text doesn't add extra vertical space */
+}
+
+.main-nav .btn:hover { /* Increased specificity for hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Subtle shadow on hover */
+}
+
+/* Increased specificity and !important for .btn-primary in the navbar */
+.main-nav .btn-primary {
+    background-color: #ec4899 !important; /* FORCED: Pink color for primary button */
+    color: #ffffff !important; /* FORCED: White text */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important; /* FORCED: Initial shadow */
+    border-radius: 8px !important; /* FORCED: Rounded corners */
+}
+
+.main-nav .btn-primary:hover { /* Increased specificity for hover */
+    background-color: #d83b8a !important; /* FORCED: Darker pink on hover */
+}
+
+.btn-secondary { /* This can remain less specific if not used in navbar */
+    background-color: #e5e7eb; /* Light gray background */
+    color: #374151; /* Dark text */
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+/* Full width button for forms */
+.full-width-btn {
+    width: 100%;
+    margin-top: 24px; /* mt-6 */
+}
+
+/* --- Section General Styles --- */
+.section {
+    padding: 80px 0; /* py-20 */
+}
+
+.section.alt-background {
+    background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+.section-heading {
+    font-size: 2.25rem; /* text-4xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 32px; /* mb-8 */
+    color: #111827; /* text-gray-900 */
+    text-align: center;
+}
+
+.section-description {
+    font-size: 1.125rem; /* text-lg */
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 32px; /* mb-8 */
+}
+
+.section-description.large-text {
+    max-width: 896px; /* max-w-2xl */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 48px; /* mb-12 */
+}
+
+.section-description.narrow-text {
+    max-width: 768px; /* max-w-3xl */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 48px; /* mb-12 */
+}
+
+.section-description.mb-medium {
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.section-description.mb-large {
+    margin-bottom: 48px; /* mb-12 */
+}
+
+.section-tagline {
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600; /* font-semibold */
+    color: #ec4899; /* text-pink-600 */
+    text-transform: uppercase;
+    margin-bottom: 8px; /* mb-2 */
+}
+
+.sub-heading {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 600; /* font-semibold */
+    color: #111827; /* text-gray-900 */
+    margin-bottom: 16px; /* mb-4 */
+}
+
+/* --- Grid Layouts --- */
+.grid-container {
+    display: grid;
+    gap: 32px; /* gap-8 */
+    max-width: 1024px; /* max-w-5xl (adjust as needed) */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.grid-container.two-columns {
+    grid-template-columns: 1fr; /* Default for mobile */
+}
+
+.grid-container.three-columns {
+    grid-template-columns: 1fr; /* Default for mobile */
+}
+
+.grid-container.four-columns {
+    grid-template-columns: 1fr; /* Default for mobile */
+}
+
+/* Responsive grid for larger screens */
+@media (min-width: 768px) { /* md breakpoint */
+    .grid-container.two-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-container.three-columns {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-container.four-columns {
+        grid-template-columns: repeat(2, 1fr); /* md:grid-cols-2 */
+    }
+}
+
+@media (min-width: 1024px) { /* lg breakpoint */
+    .grid-container.four-columns {
+        grid-template-columns: repeat(4, 1fr); /* lg:grid-cols-4 */
+    }
+}
+
+/* --- Card Styles --- */
+.card {
+    background-color: #ffffff;
+    padding: 32px; /* p-8 */
+    border-radius: 8px; /* rounded-lg */
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.1); /* card-shadow */
+    text-align: center;
+}
+
+.card-icon-circle {
+    width: 64px; /* w-16 */
+    height: 64px; /* h-16 */
+    background-color: #ec4899; /* bg-pink-500 */
+    border-radius: 9999px; /* rounded-full */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 16px; /* mb-4 */
+}
+
+.card-icon {
+    width: 32px; /* w-8 */
+    height: 32px; /* h-8 */
+    color: white; /* text-white */
+}
+
+.card-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 8px; /* mb-2 */
+    color: #111827; /* text-gray-900 */
+}
+
+.card-number {
+    font-size: 2.25rem; /* text-4xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 8px; /* mb-2 */
+    color: #111827; /* text-gray-900 */
+}
+
+.card-description {
+    color: #4b5563; /* text-gray-600 */
+}
+
+/* --- Hero Section Specific --- */
+.hero-section {
+    background-color: #1a1a1a; /* Dark background for hero */
+    color: white;
+    padding: 80px 0; /* py-20 */
+}
+
+.hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+    .hero-inner {
+        flex-direction: row;
+        text-align: left;
+    }
+    .hero-text-content {
+        width: 50%; /* md:w-1/2 */
+        margin-bottom: 0;
+    }
+    .hero-image-placeholder {
+        width: 50%; /* md:w-1/2 */
+    }
+}
+
+.hero-title {
+    font-size: 3rem; /* text-5xl */
+    line-height: 1.2;
+    font-weight: 800; /* font-extrabold */
+    margin-bottom: 24px; /* mb-6 */
+}
+
+@media (min-width: 1024px) { /* lg breakpoint */
+    .hero-title {
+        font-size: 3.75rem; /* lg:text-6xl */
+    }
+}
+
+.hero-description {
+    font-size: 1.125rem; /* text-lg */
+    margin-bottom: 32px; /* mb-8 */
+    max-width: 448px; /* max-w-md */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+    .hero-description {
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+.hero-image-placeholder {
+    width: 320px; /* w-80 */
+    height: 320px; /* h-80 */
+    background-color: #4a4a4a; /* bg-gray-700 */
+    border-radius: 9999px; /* rounded-full */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af; /* text-gray-400 */
+    font-size: 0.875rem; /* text-sm */
+    margin-bottom: 40px; /* mb-10 */
+    object-fit: cover;
+}
+.hero-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    border-radius: 9999px; /* rounded-full */
+    object-fit: cover;
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+    .hero-image-placeholder {
+        margin-bottom: 0;
+    }
+}
+
+/* --- Results Section Specific --- */
+.results-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+    .results-content {
+        flex-direction: row;
+    }
+    .results-text {
+        width: 50%; /* md:w-1/2 */
+        margin-bottom: 0;
+    }
+    .results-client-trust {
+        width: 50%; /* md:w-1/2 */
+        text-align: right; /* md:text-right */
+    }
+}
+
+.results-text {
+    margin-bottom: 32px; /* mb-8 */
+}
+
+/* --- Testimonials Section Specific --- */
+.testimonial-card {
+    text-align: left;
+}
+
+.testimonial-text {
+    font-size: 1.125rem; /* text-lg */
+    font-style: italic;
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 16px; /* mb-4 */
+}
+
+.testimonial-author {
+    font-weight: 600; /* font-semibold */
+    color: #111827; /* text-gray-900 */
+}
+
+/* --- Charting a New Course Section Specific --- */
+.charting-course-section .flex-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 48px; /* gap-12 */
+}
+
+
+@media (min-width: 768px) { /* md breakpoint */
+    .charting-course-section .flex-content {
+        flex-direction: row;
+    }
+    .charting-text-content {
+        width: 50%; /* md:w-1/2 */
+        text-align: left; /* md:text-left */
+    }
+    .charting-image-placeholder {
+        width: 50%; /* md:w-1/2 */
+    }
+}
+
+.charting-text-content {
+    text-align: center;
+}
+
+.charting-image-placeholder {
+    width: 100%; /* w-full */
+    max-width: 512px; /* max-w-xl */
+    height: 256px; /* h-64 */
+    background-color: #d1d5db; /* bg-gray-300 */
+    border-radius: 8px; /* rounded-lg */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4b5563; /* text-gray-600 */
+    font-size: 0.875rem; /* text-sm */
+}
+.charting-image-placeholder video {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px; /* rounded-lg */
+    object-fit: cover;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Space between buttons */
+    align-items: center; /* Center buttons */
+}
+
+@media (min-width: 640px) { /* sm breakpoint, for horizontal buttons */
+    .button-group {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+
+@media (min-width: 768px) { /* md breakpoint, align buttons left */
+    .button-group {
+        justify-content: flex-start;
+    }
+}
+
+/* --- How It Works Section Specific --- */
+.how-it-works-section .large-text.mt-large {
+    margin-top: 48px; /* mt-12 */
+}
+
+
+/* FAQ Accordion Styling */
+.accordion-item {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 16px;
+    overflow: hidden; /* Important for max-height transition */
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    cursor: pointer;
+    background-color: #f9fafb; /* Light background for header */
+    border-bottom: 1px solid #e5e7eb; /* Subtle separator */
+    transition: background-color 0.3s ease;
+}
+
+.accordion-header:hover {
+    background-color: #f3f4f6; /* Slightly darker on hover */
+}
+
+.accordion-header.active {
+    background-color: #e0f2f7; /* Highlight active header */
+    border-bottom-color: transparent; /* Remove border when active */
+}
+
+.accordion-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+    color: #374151;
+    margin: 0;
+    flex-grow: 1; /* Allow title to take space */
+}
+
+.accordion-arrow {
+    font-size: 1.25rem; /* text-xl */
+    color: #6b7280;
+    margin-left: 16px; /* ml-4 */
+    transition: transform 0.3s ease;
+}
+
+/* Initial state: content hidden */
+.accordion-content {
+    max-height: 0; /* Hidden by default */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out; /* Smooth transition */
+    padding: 0 24px; /* Padding for content, but only when expanded */
+}
+
+.accordion-content p {
+    padding-bottom: 18px; /* Add padding to the paragraph inside content */
+    margin: 0; /* Remove default paragraph margin */
+    color: #4b5563;
+    line-height: 1.75;
+}
+
+/* When 'open' class is added, expand the content */
+.accordion-content.open {
+    max-height: 1000px; /* A large enough value to accommodate content */
+    /* You might need to adjust this value based on your longest answer */
+}
+
+/* Rotate arrow for active state */
+.accordion-header.active .accordion-arrow {
+    transform: rotate(180deg); /* Rotate arrow up */
+}
+
+
+/* --- Solutions Page Styling --- */
+.solutions-section {
+    /* margin-top: 10%; */
+    /* border: solid ; */
+    padding: 80px 0; /* py-20 */
+    background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+.solution-card {
+    margin-top: 10%;
+    /* border:  solid; */
+    max-width: 896px; /* max-w-4xl */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+    padding: 32px; /* p-8 */
+    border-radius: 8px; /* rounded-lg */
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.1); /* card-shadow */
+    margin-bottom: 32px; /* mb-8 */
+    text-align: left; /* Override card default center */
+}
+
+.solution-title {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    color: #111827; /* text-gray-900 */
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.solution-description {
+    font-size: 1.125rem; /* text-lg */
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.solution-subtitle {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: #374151; /* text-gray-800 */
+    margin-bottom: 16px; /* mb-4 */
+}
+
+.solution-features {
+    font-size: 1.125rem; /* text-lg */
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 0; /* Remove default margin */
+}
+
+.solution-features li {
+    margin-bottom: 12px; /* space-y-3 */
+}
+
+.solution-tagline {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 700; /* font-bold */
+    color: #111827; /* text-gray-900 */
+    margin-top: 32px; /* mt-8 */
+}
+
+/* --- Contact Page Styling --- */
+.contact-section {
+    padding: 80px 0; /* py-20 */
+}
+
+.contact-form-container {
+    max-width: 512px; /* max-w-xl */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+    padding: 32px; /* p-8 */
+    border-radius: 8px; /* rounded-lg */
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.1); /* card-shadow */
+    text-align: center;
+}
+
+.contact-email {
+    font-size: 1.125rem; /* text-lg */
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* space-y-6 */
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500; /* font-medium */
+    color: #374151; /* text-gray-700 */
+    margin-bottom: 4px; /* mb-1 */
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group textarea {
+    display: block;
+    width: 100%;
+    border: 1px solid #d1d5db; /* border border-gray-300 */
+    border-radius: 6px; /* rounded-md */
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); /* shadow-sm */
+    padding: 12px; /* p-3 */
+    font-size: 1rem;
+    color: #111827;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #ec4899; /* focus:border-pink-500 */
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2); /* focus:ring-pink-500 */
+}
+
+.form-message {
+    margin-top: 16px; /* mt-4 */
+    text-align: center;
+    font-weight: 600; /* font-semibold */
+}
+
+.success-message {
+    color: #10b981; /* text-green-600 */
+}
+
+/* --- Book Demo Page Styling --- */
+.book-demo-section {
+    padding: 80px 0; /* py-20 */
+    background-color: #f3f4f6; /* bg-gray-100 */
+}
+
+.book-demo-form-container {
+    max-width: 512px; /* max-w-xl */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+    padding: 32px; /* p-8 */
+    border-radius: 8px; /* rounded-lg */
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.1); /* card-shadow */
+    text-align: center;
+}
+
+.book-demo-description {
+    font-size: 1.125rem; /* text-lg */
+    color: #4b5563; /* text-gray-700 */
+    margin-bottom: 24px; /* mb-6 */
+}
+
+.book-demo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px; /* space-y-6 */
+}
+
+.calendar-placeholder {
+    border: 1px solid #d1d5db; /* border border-gray-300 */
+    border-radius: 6px; /* rounded-md */
+    padding: 16px; /* p-4 */
+    text-align: center;
+    color: #4b5563; /* text-gray-600 */
+    background-color: #f9fafb; /* bg-gray-50 */
+}
+
+.calendar-title {
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 8px; /* mb-2 */
+}
+
+.calendar-note {
+    font-size: 0.875rem;
+    margin-bottom: 12px;
+}
+
+.date-input, .time-input {
+    padding: 8px; /* p-2 */
+    border: 1px solid #d1d5db; /* border border-gray-300 */
+    border-radius: 6px; /* rounded-md */
+    margin-top: 12px; /* mt-3 */
+}
+
+.time-input {
+    margin-left: 8px; /* ml-2 */
+}
+
+
+/* --- Footer Styling --- */
+.main-footer {
+    background-color: #1f2937; /* bg-gray-900 */
+    color: white;
+    padding: 40px 0; /* py-10 */
+    margin-top: 48px; /* mt-12 */
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px; /* space-x-4 */
+    margin-top: 16px; /* mt-4 */
+}
+
+.footer-links a {
+    color: #9ca3af; /* text-gray-400 */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: white; /* hover:text-white */
+}
+
+/* --- Utility Classes (Mimicking Tailwind for consistency in HTML structure) --- */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.mb-6 { margin-bottom: 24px; }
+.mb-8 { margin-bottom: 32px; }
+.mb-10 { margin-bottom: 40px; }
+.mb-12 { margin-bottom: 48px; }
+.mb-0 { margin-bottom: 0; }
+.mt-4 { margin-top: 16px; }
+.mt-8 { margin-top: 32px; }
+.mt-12 { margin-top: 48px; }
+.mt-large { margin-top: 48px; } /* Custom for this context */
+.ml-4 { margin-left: 16px; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-8 { gap: 32px; }
+.gap-12 { gap: 48px; }
+.space-y-4 > *:not(:first-child) { margin-top: 16px; }
+.space-y-3 > *:not(:first-child) { margin-top: 12px; }
+.list-disc { list-style-type: disc; }
+.list-inside { list-style-position: inside; }
+.italic { font-style: italic; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-extrabold { font-weight: 800; }
+.uppercase { text-transform: uppercase; }
+.hover\:underline:hover { text-decoration: underline; }
+
+/* Responsive utility classes for flex/grid */
+@media (min-width: 768px) { /* md breakpoint */
+    .md\:flex-row { flex-direction: row; }
+    .md\:text-left { text-align: left; }
+    .md\:text-right { text-align: right; }
+    .md\:mb-0 { margin-bottom: 0; }
+    .md\:w-1\/2 { width: 50%; }
+}
+
+/* Specific flex-content for charting section */
+.flex-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px; /* gap-12 */
+}
+
+@media (min-width: 768px) {
+    .flex-content {
+        flex-direction: row;
+        justify-content: center;
+    }
+}

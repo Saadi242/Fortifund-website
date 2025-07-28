@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FortiFund - Matchmaking (Live Now)</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+
+<header id="main-header" class="main-header">
+    <div class="container header-content">
+        <div class="site-logo">
+            <a href="index.html">
+                <img src="assets/image/fortifund logo.jpg" alt="FortiFund Logo" class="logo-img">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <!-- Navbar items will be dynamically loaded here by script.js -->
+            <ul>
+                <!-- Placeholder for dynamic content -->
+                <li>Loading Navigation...</li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+<main class="main-content">
+    <!-- Matchmaking Section - Added data-section for dynamic loading -->
+    <section class="solution-section" data-section="matchmaking_page">
+        <div id="matchmaking" class="solution-card">
+            <!-- Added data-content-key="matchmaking_title" -->
+            <h3 class="solution-title" data-content-key="matchmaking_title">Matchmaking (Live Now)</h3>
+            <!-- Added data-content-key="matchmaking_description" -->
+            <p class="solution-description" data-content-key="matchmaking_description">FortiFund’s core matchmaking engine helps brokers instantly connect their deals with the most relevant lenders — based on real funding criteria and your custom preferences.</p>
+            <!-- Added data-content-key="matchmaking_subtitle" -->
+            <h4 class="solution-subtitle" data-content-key="matchmaking_subtitle">What’s included now:</h4>
+            <ul class="bullet-list solution-features">
+                <!-- Added data-content-key for each list item -->
+                <li><strong data-content-key="matchmaking_feature1_title">Precision Matching:</strong> <span data-content-key="matchmaking_feature1_description">Based on guidelines, commissions, and your preferred lenders.</span></li>
+                <li><strong data-content-key="matchmaking_feature2_title">Manual Deal Sending:</strong> <span data-content-key="matchmaking_feature2_description">You send the deal after matching — with full control.</span></li>
+                <li><strong data-content-key="matchmaking_feature3_title">Automatic Deal Storage:</strong> <span data-content-key="matchmaking_feature3_description">Every submitted deal is saved in your dashboard, so you can easily track, revisit, and manage past submissions.</span></li>
+                <li><strong data-content-key="matchmaking_feature4_title">Organized File Uploads:</strong> <span data-content-key="matchmaking_feature4_description">Deal docs are uploaded and stored per file — no clutter, no confusion.</span></li>
+            </ul>
+            <!-- Added data-content-key="matchmaking_tagline" -->
+            <p class="solution-tagline" data-content-key="matchmaking_tagline">🎯 Submit once. Match better. Keep everything organized in one place.</p>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container text-center">
+        <p>&copy; 2024 FortiFund. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Custom JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>

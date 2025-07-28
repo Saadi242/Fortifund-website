@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FortiFund Admin Panel</title>
+    <!-- Admin Panel Specific CSS -->
+    <link rel="stylesheet" href="admin.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="admin-container">
+    <header class="admin-header">
+        <div class="site-logo">FortiFund Admin</div>
+        <nav class="admin-nav">
+            <button id="logoutBtn" class="btn btn-secondary" style="display:none;">Logout</button>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <!-- Login Section -->
+        <section id="loginSection" class="admin-section login-section active">
+            <div class="form-container">
+                <h2 class="section-heading">Admin Login</h2>
+                <form id="adminLoginForm" class="admin-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width-btn">Login</button>
+                </form>
+                <div id="loginMessage" class="form-message" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section (Hidden until login) -->
+        <section id="dashboardSection" class="admin-section dashboard-section" style="display:none;">
+            <h2 class="section-heading">Welcome, Admin!</h2>
+
+            <div class="admin-tabs">
+                <button class="tab-button active" data-tab="contentManagement">Text Content</button>
+                <button class="tab-button" data-tab="assetManagement">Images & Videos</button>
+                <button class="tab-button" data-tab="faqManagement">FAQs</button>
+                <button class="tab-button" data-tab="navbarManagement">Navbar</button>
+                <button class="tab-button" data-tab="formSubmissions">Form Submissions</button>
+            </div>
+
+            <!-- Text Content Tab -->
+            <div id="contentManagement" class="tab-content active">
+                <h3 class="sub-heading">Manage Website Text Content</h3>
+                <p class="section-description">Edit the text content displayed on your website pages.</p>
+                <div id="contentEditor" class="content-editor-grid">
+                    <p>Loading text content...</p>
+                </div>
+                <button id="saveContentBtn" class="btn btn-primary mt-4">Save All Text Content Changes</button>
+                <div id="contentMessage" class="form-message" style="display:none;"></div>
+            </div>
+
+            <!-- Asset Management Tab -->
+            <div id="assetManagement" class="tab-content">
+                <h3 class="sub-heading">Manage Images & Videos</h3>
+                <p class="section-description">Add, edit, or delete image and video assets used on your website.</p>
+
+                <div class="asset-tabs">
+                    <button class="asset-tab-button active" data-asset-tab="images">Images</button>
+                    <button class="asset-tab-button" data-asset-tab="videos">Videos</button>
+                </div>
+
+                <div id="imageAssets" class="asset-tab-content active">
+                    <h4 class="mini-heading">Image Assets</h4>
+                    <button id="addImageBtn" class="btn btn-secondary mb-3">Add New Image</button>
+                    <div id="imageAssetsList" class="asset-list-grid">
+                        <p>Loading image assets...</p>
+                    </div>
+                </div>
+
+                <div id="videoAssets" class="asset-tab-content">
+                    <h4 class="mini-heading">Video Assets</h4>
+                    <button id="addVideoBtn" class="btn btn-secondary mb-3">Add New Video</button>
+                    <div id="videoAssetsList" class="asset-list-grid">
+                        <p>Loading video assets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Management Tab -->
+            <div id="faqManagement" class="tab-content">
+                <h3 class="sub-heading">Manage Frequently Asked Questions</h3>
+                <p class="section-description">Add, edit, or delete FAQ items displayed on the FAQ page.</p>
+                <button id="addFaqBtn" class="btn btn-secondary mb-3">Add New FAQ</button>
+                <div id="faqList" class="data-list">
+                    <p>Loading FAQs...</p>
+                </div>
+            </div>
+
+            <!-- Navbar Management Tab -->
+            <div id="navbarManagement" class="tab-content">
+                <h3 class="sub-heading">Manage Navigation Bar Items</h3>
+                <p class="section-description">Edit the text and links for your main navigation bar. (Adding/deleting complex nested items is not supported here.)</p>
+                <div id="navbarList" class="data-list">
+                    <p>Loading Navbar Items...</p>
+                </div>
+                <button id="saveNavbarBtn" class="btn btn-primary mt-4">Save All Navbar Changes</button>
+                <div id="navbarMessage" class="form-message" style="display:none;"></div>
+            </div>
+
+            <!-- Form Submissions Tab (Existing) -->
+            <div id="formSubmissions" class="tab-content">
+                <h3 class="sub-heading">View Form Submissions</h3>
+                <div class="form-tabs">
+                    <button class="form-tab-button active" data-form-tab="contact">Contact Messages</button>
+                    <button class="form-tab-button" data-form-tab="demo">Demo Requests</button>
+                </div>
+
+                <div id="contactMessages" class="form-tab-content active">
+                    <h4 class="mini-heading">Contact Messages</h4>
+                    <div id="contactMessagesList" class="data-list">
+                        <p>Loading contact messages...</p>
+                    </div>
+                </div>
+
+                <div id="demoRequests" class="form-tab-content">
+                    <h4 class="mini-heading">Demo Requests</h4>
+                    <div id="demoRequestsList" class="data-list">
+                        <p>Loading demo requests...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Modals for Add/Edit -->
+<div id="assetModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3 id="assetModalTitle">Add/Edit Asset</h3>
+        <form id="assetForm" class="admin-form">
+            <input type="hidden" id="assetId" name="id">
+            <input type="hidden" id="assetType" name="assetType">
+            <div class="form-group">
+                <label for="assetSectionName">Section Name (e.g., home_hero)</label>
+                <input type="text" id="assetSectionName" name="sectionName" required>
+            </div>
+            <div class="form-group">
+                <label for="assetKey">Asset Key (e.g., hero_image)</label>
+                <input type="text" id="assetKey" name="assetKey" required>
+            </div>
+            <div class="form-group">
+                <label for="assetUrl">URL (e.g., assets/image/your-image.png)</label>
+                <input type="text" id="assetUrl" name="url" required>
+            </div>
+            <div class="form-group">
+                <label for="assetAltText">Alt Text (for images)</label>
+                <input type="text" id="assetAltText" name="altText">
+            </div>
+            <div class="form-group" id="posterUrlGroup">
+                <label for="assetPosterUrl">Poster URL (for videos)</label>
+                <input type="text" id="assetPosterUrl" name="posterUrl">
+            </div>
+            <button type="submit" class="btn btn-primary full-width-btn">Save Asset</button>
+        </form>
+        <div id="assetMessage" class="form-message" style="display:none;"></div>
+    </div>
+</div>
+
+<div id="faqModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3 id="faqModalTitle">Add/Edit FAQ</h3>
+        <form id="faqForm" class="admin-form">
+            <input type="hidden" id="faqId" name="id">
+            <div class="form-group">
+                <label for="faqQuestion">Question</label>
+                <textarea id="faqQuestion" name="question" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="faqAnswer">Answer</label>
+                <textarea id="faqAnswer" name="answer" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="faqDisplayOrder">Display Order</label>
+                <input type="number" id="faqDisplayOrder" name="displayOrder" required>
+            </div>
+            <button type="submit" class="btn btn-primary full-width-btn">Save FAQ</button>
+        </form>
+        <div id="faqMessage" class="form-message" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- Admin Panel Specific JavaScript -->
+<script src="admin.js"></script>
+</body>
+</html>

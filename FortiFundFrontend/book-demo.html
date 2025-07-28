@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FortiFund - Book a Demo</title>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+
+<header id="main-header" class="main-header">
+    <div class="container header-content">
+        <div class="site-logo">
+            <a href="index.html">
+                <img src="assets/image/fortifund logo.jpg" alt="FortiFund Logo" class="logo-img">
+            </a>
+        </div>
+        <nav class="main-nav">
+            <!-- Navbar items will be dynamically loaded here by script.js -->
+            <ul>
+                <!-- Placeholder for dynamic content -->
+                <li>Loading Navigation...</li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+<main class="main-content">
+    <!-- Book Demo Section - Added data-section for dynamic loading -->
+    <section class="book-demo-section alt-background" data-section="book_demo_page">
+        <!-- Added data-content-key="book_demo_heading" -->
+        <h2 class="section-heading" data-content-key="book_demo_heading">Book a Demo</h2>
+        <div class="book-demo-form-container">
+            <!-- Added data-content-key="book_demo_description" -->
+            <p class="book-demo-description" data-content-key="book_demo_description">Schedule a consultation to see how FortiFund can reduce your risk.</p>
+            <form id="bookDemoForm" class="book-demo-form">
+                <div class="form-group">
+                    <label for="demo-name">Full Name</label>
+                    <input type="text" id="demo-name" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="demo-phone">Phone Number</label>
+                    <input type="tel" id="demo-phone" name="phoneNumber">
+                </div>
+                <div class="form-group">
+                    <label for="demo-company">Company</label>
+                    <input type="text" id="demo-company" name="company" required>
+                </div>
+                <div class="form-group">
+                    <label for="demo-email">Email</label>
+                    <input type="email" id="demo-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="demo-comments">Comments</label>
+                    <textarea id="demo-comments" name="comments" rows="3"></textarea>
+                </div>
+                <!-- Calendar Placeholder -->
+                <div class="calendar-placeholder">
+                    <!-- Added data-content-key="calendar_title" -->
+                    <p class="calendar-title" data-content-key="calendar_title">Select a Day and Time</p>
+                    <!-- Added data-content-key="calendar_note" -->
+                    <p class="calendar-note" data-content-key="calendar_note">A full interactive calendar integration would require a dedicated library or API. For this demo, please imagine a calendar widget here.</p>
+                    <input type="date" class="date-input" name="demoDate">
+                    <input type="time" class="time-input" name="demoTime">
+                </div>
+                <button type="submit" class="btn btn-primary full-width-btn">Schedule Demo</button>
+            </form>
+            <div id="demoMessage" class="form-message success-message" style="display: none;"></div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container text-center">
+        <p>&copy; 2024 FortiFund. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Custom JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,531 @@
+/* General Body and Font Styles for Admin Panel */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f6; /* Light gray background for admin */
+    color: #374151; /* Dark gray text */
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.admin-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Admin Header */
+.admin-header {
+    background-color: #1f2937; /* Dark header background */
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.admin-header .site-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.admin-nav .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+}
+
+/* Admin Main Content Area */
+.admin-main {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.admin-section {
+    margin-bottom: 40px;
+}
+
+.section-heading {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.sub-heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #111827;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 10px;
+}
+
+.mini-heading {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+.section-description {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 20px;
+}
+
+/* Form Styles (reused from main site, but can be adjusted) */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="url"],
+.form-group input[type="number"],
+.form-group textarea {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #111827;
+    box-sizing: border-box; /* Include padding in width */
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4f46e5; /* Indigo for admin focus */
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* Buttons (reused from main site, but can be adjusted for admin theme) */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    border: none;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+    background-color: #4f46e5; /* Indigo primary button for admin */
+    color: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-primary:hover {
+    background-color: #4338ca; /* Darker indigo on hover */
+}
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+.full-width-btn {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.form-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.form-message.success {
+    background-color: #d1fae5; /* Light green */
+    color: #065f46; /* Dark green text */
+}
+
+.form-message.error {
+    background-color: #fee2e2; /* Light red */
+    color: #991b1b; /* Dark red text */
+}
+
+/* Admin Tabs */
+.admin-tabs {
+    display: flex;
+    flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+    color: #111827;
+}
+
+.tab-button.active {
+    color: #4f46e5; /* Indigo active tab */
+    border-bottom-color: #4f46e5;
+    font-weight: 600;
+}
+
+.tab-content {
+    display: none;
+    padding-top: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Content Editor Grid */
+.content-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+}
+
+.content-section-group { /* New class for grouping content items by section */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px; /* Space between section groups */
+}
+
+.content-section-group .mini-heading {
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 10px;
+}
+
+.content-item {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 10px; /* Space between content items within a group */
+}
+
+.content-item label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.content-item input[type="text"],
+.content-item textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.content-item textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* Asset Tabs */
+.asset-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.asset-tab-button {
+    background-color: transparent;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.asset-tab-button:hover {
+    color: #111827;
+}
+
+.asset-tab-button.active {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+    font-weight: 600;
+}
+
+.asset-tab-content {
+    display: none;
+    padding-top: 15px;
+}
+
+.asset-tab-content.active {
+    display: block;
+}
+
+.asset-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.asset-item {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.asset-item strong {
+    color: #111827;
+}
+
+.asset-item img, .asset-item video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-top: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.asset-item .asset-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Form Submissions List */
+.form-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.form-tab-button {
+    background-color: transparent;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.form-tab-button:hover {
+    color: #111827;
+}
+
+.form-tab-button.active {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+    font-weight: 600;
+}
+
+.form-tab-content {
+    display: none;
+    padding-top: 15px;
+}
+
+.form-tab-content.active {
+    display: block;
+}
+
+.data-list {
+    background-color: #f9fafb;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    max-height: 500px; /* Scrollable area for long lists */
+    overflow-y: auto;
+}
+
+.data-item {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.data-item p {
+    margin: 0 0 5px 0;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.data-item p strong {
+    color: #111827;
+}
+
+.data-item .timestamp {
+    font-size: 0.8rem;
+    color: #6b7280;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.data-item .item-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Centered */
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more responsive */
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    animation: fadeIn 0.3s;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .admin-tabs {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .tab-button {
+        width: 100%;
+        text-align: left;
+        border-bottom: none; /* Remove individual borders */
+    }
+    .tab-button.active {
+        border-bottom: none;
+        background-color: #f0f0f0; /* Highlight active tab */
+    }
+    .content-editor-grid, .asset-list-grid {
+        grid-template-columns: 1fr;
+    }
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+}
