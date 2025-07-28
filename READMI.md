@@ -30,17 +30,17 @@ First, you need to compile your Java project. Navigate to your FortiFundBackend 
 
 Compile:
 
-terminal
+terminal->
 
-javac -cp "lib/*" src/WebServer.java src/db/DBManager.java src/controllers/*.java -d out
+javac -d FortiFundBackend/out -cp "FortiFundBackend/lib/*" FortiFundBackend/src/WebServer.java FortiFundBackend/src/db/DBManager.java FortiFundBackend/src/controllers/*.java FortiFundBackend/src/models/*.java
 
 (Make sure lib contains mysql-connector-j-x.x.x.jar and json-x.x.x.jar)
 
 Run:
 
-terminal
+terminal->
 
-java -cp "out:lib/*" WebServer
+java -cp "FortiFundBackend/out;FortiFundBackend/lib/*" WebServer
 
 (On Windows, use out;lib/* instead of out:lib/*)
 
