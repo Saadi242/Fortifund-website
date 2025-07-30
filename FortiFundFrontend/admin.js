@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Text Content elements
     const contentEditor = document.getElementById('contentEditor');
-    const saveContentBtn = document.getElementById('saveContentBtn');
+    // Removed global saveContentBtn
     const contentMessage = document.getElementById('contentMessage');
     let textContentData = {}; // To store fetched text content for editing
 
@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- Content Management Logic (Existing, but improved rendering) ---
+    // --- Content Management Logic (Per-Section Rendering & Saving) ---
     async function fetchAdminContent() {
         try {
             const response = await fetch(`${API_BASE_URL}/admin/content`);
@@ -245,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contentEditor.innerHTML = ''; // Clear existing content
         const sectionsHtml = {}; // Object to group HTML by sectionName
 
+        // Group content by sectionName
         for (const sectionName in textContentData) {
             let sectionContentHtml = `<h4 class="mini-heading">${formatSectionName(sectionName)}</h4>`;
             for (const contentKey in textContentData[sectionName]) {
@@ -252,12 +253,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const inputType = (contentKey.includes('description') || contentKey.includes('comments') || contentKey.includes('message') || contentKey.includes('text') || contentKey.includes('answer')) ? 'textarea' : 'input';
 
                 sectionContentHtml += `
-                    <div class="content-item">
+                    <div class="form-group content-item">
                         <label for="${sectionName}-${contentKey}">${formatContentKey(contentKey)}</label>
                         <${inputType} id="${sectionName}-${contentKey}" name="${sectionName}-${contentKey}" data-section="${sectionName}" data-key="${contentKey}" ${inputType === 'textarea' ? 'rows="3"' : 'type="text"'}>${value}</${inputType}>
                     </div>
                 `;
             }
+            // Add a save button for each section
+            sectionContentHtml += `
+                <button class="btn btn-primary btn-small save-section-btn" data-section-name="${sectionName}">Save ${formatSectionName(sectionName)}</button>
+                <div id="message-${sectionName}" class="form-message mt-2" style="display:none;"></div>
+            `;
             sectionsHtml[sectionName] = `<div class="content-section-group">${sectionContentHtml}</div>`;
         }
 
@@ -266,62 +272,63 @@ document.addEventListener('DOMContentLoaded', () => {
         sortedSectionNames.forEach(sectionName => {
             contentEditor.innerHTML += sectionsHtml[sectionName];
         });
-    }
 
-    saveContentBtn.addEventListener('click', async () => {
-        contentMessage.style.display = 'none';
-        contentMessage.classList.remove('success', 'error');
+        // Attach event listeners to the new "Save Section" buttons
+        contentEditor.querySelectorAll('.save-section-btn').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                const sectionToSave = e.target.dataset.sectionName;
+                const sectionMessageElement = document.getElementById(`message-${sectionToSave}`);
+                sectionMessageElement.style.display = 'none';
+                sectionMessageElement.classList.remove('success', 'error');
 
-        const inputs = contentEditor.querySelectorAll('input, textarea');
-        const allContentUpdates = []; // Collect ALL content from the form
+                const inputsInSection = contentEditor.querySelectorAll(`[data-section="${sectionToSave}"]`);
+                const sectionUpdates = [];
 
-        inputs.forEach(input => {
-            const sectionName = input.dataset.section;
-            const contentKey = input.dataset.key;
-            const contentValue = input.value;
+                inputsInSection.forEach(input => {
+                    sectionUpdates.push({
+                        sectionName: input.dataset.section,
+                        contentKey: input.dataset.key,
+                        contentValue: input.value
+                    });
+                });
 
-            allContentUpdates.push({
-                sectionName: sectionName,
-                contentKey: contentKey,
-                contentValue: contentValue
+                if (sectionUpdates.length === 0) {
+                    sectionMessageElement.textContent = 'No content fields found for this section.';
+                    sectionMessageElement.classList.add('error');
+                    sectionMessageElement.style.display = 'block';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/admin/content`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(sectionUpdates) // Send only updates for this section
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        sectionMessageElement.textContent = result.message;
+                        sectionMessageElement.classList.add('success');
+                        // No need to re-fetch all content, just this section is updated
+                        // Optionally, update textContentData for this section if needed
+                    } else {
+                        sectionMessageElement.textContent = result.message || `Failed to save ${formatSectionName(sectionToSave)}.`;
+                        sectionMessageElement.classList.add('error');
+                    }
+                } catch (error) {
+                    console.error(`Error saving section ${sectionToSave}:`, error);
+                    sectionMessageElement.textContent = `An error occurred while saving ${formatSectionName(sectionToSave)}: ${error.message}`;
+                    sectionMessageElement.classList.add('error');
+                } finally {
+                    sectionMessageElement.style.display = 'block';
+                }
             });
         });
+    }
 
-        if (allContentUpdates.length === 0) {
-            contentMessage.textContent = 'No content fields found to save.';
-            contentMessage.classList.add('error'); // Changed to error as this indicates an issue
-            contentMessage.style.display = 'block';
-            return;
-        }
-
-        try {
-            // Send all updates in a single batch request
-            const response = await fetch(`${API_BASE_URL}/admin/content`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(allContentUpdates) // Send the entire array
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                contentMessage.textContent = result.message;
-                contentMessage.classList.add('success');
-                fetchAdminContent(); // Re-fetch to ensure local data is in sync
-            } else {
-                contentMessage.textContent = result.message || `Failed to save all text content.`;
-                contentMessage.classList.add('error');
-            }
-        } catch (error) {
-            console.error('Error saving text content:', error);
-            contentMessage.textContent = `An error occurred while saving text content: ${error.message}`;
-            contentMessage.classList.add('error');
-        } finally {
-            contentMessage.style.display = 'block';
-        }
-    });
-
-    // Helper functions for formatting keys (already present, just for context)
+    // Helper functions for formatting keys
     function formatSectionName(name) {
         return name.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
     }
@@ -653,8 +660,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(result.message || `Failed to delete FAQ.`);
             }
         } catch (error) {
-            console.error('Delete FAQ error:', error);
-            alert('An error occurred during FAQ deletion.');
+                console.error('Delete FAQ error:', error);
+                alert('An error occurred during FAQ deletion.');
         }
     }
 
