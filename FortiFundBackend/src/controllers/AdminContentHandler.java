@@ -24,6 +24,7 @@ public class AdminContentHandler implements HttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        exchange.getResponseHeaders().add("Content-Type", "application/json"); // Ensure JSON content type is sent
 
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -35,7 +36,7 @@ public class AdminContentHandler implements HttpHandler {
         } else if ("PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
             handleUpdateTextContent(exchange);
         } else {
-            sendResponse(exchange, 405, "Method Not Allowed");
+            sendResponse(exchange, 405, "{\"message\": \"Method Not Allowed\"}");
         }
     }
 
@@ -47,7 +48,6 @@ public class AdminContentHandler implements HttpHandler {
 
         try {
             conn = DBManager.getConnection();
-            // *** IMPORTANT: Ensure this SQL query is exactly as below, without any WHERE clause ***
             String sql = "SELECT section_name, content_key, content_value FROM text_content";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -65,7 +65,7 @@ public class AdminContentHandler implements HttpHandler {
         } catch (SQLException e) {
             System.err.println("Database error fetching all text content: " + e.getMessage());
             e.printStackTrace();
-            sendResponse(exchange, 500, "Internal Server Error: Database access failed.");
+            sendResponse(exchange, 500, "{\"message\": \"Internal Server Error: Database access failed.\"}");
         } finally {
             DBManager.close(rs, ps, conn);
         }
@@ -86,42 +86,58 @@ public class AdminContentHandler implements HttpHandler {
             br.close();
             isr.close();
 
-            JSONObject requestBody = new JSONObject(sb.toString());
-            String sectionName = requestBody.optString("sectionName");
-            String contentKey = requestBody.optString("contentKey");
-            String contentValue = requestBody.optString("contentValue");
-
-            if (sectionName.isEmpty() || contentKey.isEmpty() || contentValue == null) {
-                sendResponse(exchange, 400, "Bad Request: Missing sectionName, contentKey, or contentValue.");
-                return;
-            }
+            // Expecting a JSONArray of updates
+            JSONArray updatesArray = new JSONArray(sb.toString());
 
             conn = DBManager.getConnection();
-            // Use INSERT ... ON DUPLICATE KEY UPDATE for upsert functionality
+            conn.setAutoCommit(false); // Start transaction
+
             String sql = "INSERT INTO text_content (section_name, content_key, content_value) VALUES (?, ?, ?) " +
-                    "ON DUPLICATE KEY UPDATE content_value = VALUES(content_value)";
+                         "ON DUPLICATE KEY UPDATE content_value = VALUES(content_value)";
             ps = conn.prepareStatement(sql);
-            ps.setString(1, sectionName);
-            ps.setString(2, contentKey);
-            ps.setString(3, contentValue);
 
-            int rowsAffected = ps.executeUpdate();
+            for (int i = 0; i < updatesArray.length(); i++) {
+                JSONObject update = updatesArray.getJSONObject(i);
+                String sectionName = update.optString("sectionName");
+                String contentKey = update.optString("contentKey");
+                String contentValue = update.optString("contentValue");
 
-            if (rowsAffected > 0) {
-                sendResponse(exchange, 200, "{\"message\": \"Content updated successfully.\"}");
-            } else {
-                sendResponse(exchange, 500, "{\"message\": \"Failed to update content.\"}");
+                if (sectionName.isEmpty() || contentKey.isEmpty() || contentValue == null) {
+                    // Log warning but continue, or throw specific error if any single item is invalid
+                    System.err.println("Warning: Skipping invalid content update - Missing sectionName, contentKey, or contentValue.");
+                    continue; // Skip this invalid update
+                }
+
+                ps.setString(1, sectionName);
+                ps.setString(2, contentKey);
+                ps.setString(3, contentValue);
+                ps.addBatch(); // Add to batch for efficient execution
             }
 
+            int[] rowsAffected = ps.executeBatch(); // Execute all updates in batch
+            conn.commit(); // Commit transaction
+
+            sendResponse(exchange, 200, "{\"message\": \"All text content changes saved successfully.\"}");
+
         } catch (SQLException e) {
+            try {
+                if (conn != null) conn.rollback(); // Rollback on error
+            } catch (SQLException rollbackEx) {
+                System.err.println("Error during rollback: " + rollbackEx.getMessage());
+            }
             System.err.println("Database error updating text content: " + e.getMessage());
             e.printStackTrace();
-            sendResponse(exchange, 500, "Internal Server Error: Database access failed.");
+            sendResponse(exchange, 500, "{\"message\": \"Internal Server Error: Database access failed during batch update.\"}");
         } catch (Exception e) {
             System.err.println("Error processing update content request: " + e.getMessage());
             e.printStackTrace();
-            sendResponse(exchange, 400, "Invalid JSON or request body.");
+            sendResponse(exchange, 400, "{\"message\": \"Invalid JSON format or request body for batch update.\"}");
         } finally {
+            try {
+                if (conn != null) conn.setAutoCommit(true); // Reset auto-commit
+            } catch (SQLException autoCommitEx) {
+                System.err.println("Error resetting auto-commit: " + autoCommitEx.getMessage());
+            }
             DBManager.close(null, ps, conn);
         }
     }
