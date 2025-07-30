@@ -53,12 +53,13 @@
             <!-- Text Content Tab -->
             <div id="contentManagement" class="tab-content active">
                 <h3 class="sub-heading">Manage Website Text Content</h3>
-                <p class="section-description">Edit the text content displayed on your website pages.</p>
-                <div id="contentEditor" class="content-editor-grid">
+                <p class="section-description">Edit the text content displayed on your website pages. Each section can be saved individually.</p>
+                <div id="contentEditor" class="content-editor-sections">
                     <p>Loading text content...</p>
+                    <!-- Dynamic content sections will be rendered here by admin.js -->
                 </div>
-                <button id="saveContentBtn" class="btn btn-primary mt-4">Save All Text Content Changes</button>
-                <div id="contentMessage" class="form-message" style="display:none;"></div>
+                <!-- Removed global saveContentBtn -->
+                <div id="contentMessage" class="form-message mt-4" style="display:none;"></div>
             </div>
 
             <!-- Asset Management Tab -->
