@@ -273,54 +273,62 @@ document.addEventListener('DOMContentLoaded', () => {
         contentMessage.classList.remove('success', 'error');
 
         const inputs = contentEditor.querySelectorAll('input, textarea');
-        const updates = [];
+        const allContentUpdates = []; // Collect ALL content from the form
 
         inputs.forEach(input => {
             const sectionName = input.dataset.section;
             const contentKey = input.dataset.key;
             const contentValue = input.value;
 
-            // Only send update if value has changed
-            if (textContentData[sectionName] && textContentData[sectionName][contentKey] !== contentValue) {
-                updates.push({
-                    sectionName: sectionName,
-                    contentKey: contentKey,
-                    contentValue: contentValue
-                });
-            }
+            allContentUpdates.push({
+                sectionName: sectionName,
+                contentKey: contentKey,
+                contentValue: contentValue
+            });
         });
 
-        if (updates.length === 0) {
-            contentMessage.textContent = 'No changes to save.';
-            contentMessage.classList.add('success');
+        if (allContentUpdates.length === 0) {
+            contentMessage.textContent = 'No content fields found to save.';
+            contentMessage.classList.add('error'); // Changed to error as this indicates an issue
             contentMessage.style.display = 'block';
             return;
         }
 
         try {
-            for (const update of updates) {
-                const response = await fetch(`${API_BASE_URL}/admin/content`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(update)
-                });
+            // Send all updates in a single batch request
+            const response = await fetch(`${API_BASE_URL}/admin/content`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(allContentUpdates) // Send the entire array
+            });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`Failed to update ${update.sectionName}.${update.contentKey}: ${errorData.message || response.statusText}`);
-                }
+            const result = await response.json();
+
+            if (response.ok) {
+                contentMessage.textContent = result.message;
+                contentMessage.classList.add('success');
+                fetchAdminContent(); // Re-fetch to ensure local data is in sync
+            } else {
+                contentMessage.textContent = result.message || `Failed to save all text content.`;
+                contentMessage.classList.add('error');
             }
-            contentMessage.textContent = 'All text content changes saved successfully!';
-            contentMessage.classList.add('success');
-            fetchAdminContent(); // Re-fetch to ensure local data is in sync
         } catch (error) {
             console.error('Error saving text content:', error);
-            contentMessage.textContent = `Error saving text content: ${error.message}`;
+            contentMessage.textContent = `An error occurred while saving text content: ${error.message}`;
             contentMessage.classList.add('error');
         } finally {
             contentMessage.style.display = 'block';
         }
     });
+
+    // Helper functions for formatting keys (already present, just for context)
+    function formatSectionName(name) {
+        return name.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+    }
+
+    function formatContentKey(key) {
+        return key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+    }
 
     // --- Asset Management Logic ---
     async function fetchAssets(type) {
@@ -611,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 faqMessage.textContent = result.message;
                 faqMessage.classList.add('success');
                 fetchFaqs(); // Re-fetch list
-                setTimeout(() => faqModal.style.display = 'none', 1500);
+                setTimeout(() => faqModal.style.display = 'none', 1500); // Close after success
             } else {
                 faqMessage.textContent = result.message || `Failed to ${method === 'POST' ? 'add' : 'update'} FAQ.`;
                 faqMessage.classList.add('error');
@@ -626,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     async function deleteFaq(id) {
-        if (!confirm(`Are you sure you want to delete this FAQ item?`)) {
+        if (!confirm(`Are you sure you want to delete this FAQ?`)) {
             return;
         }
         try {
@@ -650,7 +658,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     // --- Navbar Management Logic ---
     async function fetchNavbarItems() {
         navbarList.innerHTML = '<p>Loading Navbar Items...</p>';
@@ -659,43 +666,106 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            navbarItemsData = await response.json(); // Store for saving
-            renderNavbarItems(navbarItemsData);
+            navbarItemsData = await response.json(); // Store fetched data
+            renderNavbarItems();
         } catch (error) {
-            console.error('Error fetching Navbar items:', error);
-            navbarList.innerHTML = '<p class="form-message error">Failed to load Navbar items.</p>';
+            console.error('Error fetching navbar items:', error);
+            navbarList.innerHTML = '<p class="form-message error">Failed to load navbar items.</p>';
         }
     }
 
-    function renderNavbarItems(items, parentElement = navbarList, level = 0) {
-        if (level === 0) { // Clear only for top-level call
-            parentElement.innerHTML = '';
-        }
-
-        if (items.length === 0 && level === 0) {
-            parentElement.innerHTML = '<p>No Navbar items found.</p>';
+    function renderNavbarItems() {
+        navbarList.innerHTML = ''; // Clear existing
+        if (navbarItemsData.length === 0) {
+            navbarList.innerHTML = '<p>No navbar items found. Add items via SQL or ensure data is present.</p>';
             return;
         }
 
-        items.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.classList.add('data-item');
-            itemDiv.style.marginLeft = `${level * 20}px`; // Indent children
+        // Create a map for quick lookup and to build hierarchy
+        const itemMap = new Map();
+        navbarItemsData.forEach(item => {
+            itemMap.set(item.id, { ...item, children: [] });
+        });
 
-            itemDiv.innerHTML = `
-                <p><strong>Order:</strong> <input type="number" class="navbar-input" data-id="${item.id}" data-key="displayOrder" value="${item.displayOrder}" style="width: 60px;"></p>
-                <p><strong>Text:</strong> <input type="text" class="navbar-input" data-id="${item.id}" data-key="itemText" value="${item.itemText}" style="width: 200px;"></p>
-                <p><strong>Href:</strong> <input type="text" class="navbar-input" data-id="${item.id}" data-key="itemHref" value="${item.itemHref}" style="width: 250px;"></p>
-                <p><strong>Dropdown:</strong> <input type="checkbox" class="navbar-input" data-id="${item.id}" data-key="isDropdown" ${item.isDropdown ? 'checked' : ''}></p>
-            `;
-            parentElement.appendChild(itemDiv);
-
-            if (item.children && item.children.length > 0) {
-                const childrenContainer = document.createElement('div');
-                childrenContainer.classList.add('navbar-children');
-                parentElement.appendChild(childrenContainer);
-                renderNavbarItems(item.children, childrenContainer, level + 1);
+        const rootItems = [];
+        itemMap.forEach(item => {
+            if (item.parentId === null || item.parentId === undefined) {
+                rootItems.push(item);
+            } else {
+                const parent = itemMap.get(item.parentId);
+                if (parent) {
+                    parent.children.push(item);
+                }
             }
+        });
+
+        // Sort root items and their children by displayOrder
+        rootItems.sort((a, b) => a.displayOrder - b.displayOrder);
+        rootItems.forEach(item => {
+            item.children.sort((a, b) => a.displayOrder - b.displayOrder);
+        });
+
+        rootItems.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('data-item', 'navbar-item', item.isDropdown ? 'dropdown-parent' : '');
+            itemDiv.innerHTML = `
+                <p><strong>Text:</strong> <input type="text" data-id="${item.id}" data-field="itemText" value="${item.itemText}"></p>
+                <p><strong>Href:</strong> <input type="text" data-id="${item.id}" data-field="itemHref" value="${item.itemHref}"></p>
+                <p><strong>Order:</strong> <input type="number" data-id="${item.id}" data-field="displayOrder" value="${item.displayOrder}" min="1"></p>
+                <p><strong>Dropdown:</strong> <input type="checkbox" data-id="${item.id}" data-field="isDropdown" ${item.isDropdown ? 'checked' : ''}></p>
+                <p><strong>Parent ID:</strong> <input type="number" data-id="${item.id}" data-field="parentId" value="${item.parentId !== null ? item.parentId : ''}" ${item.isDropdown ? 'disabled' : ''}></p>
+                <div class="item-actions">
+                    <button class="btn btn-secondary btn-small delete-navbar-btn" data-id="${item.id}">Delete</button>
+                </div>
+            `;
+            navbarList.appendChild(itemDiv);
+
+            if (item.children.length > 0) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.classList.add('dropdown-children');
+                item.children.forEach(child => {
+                    const childDiv = document.createElement('div');
+                    childDiv.classList.add('data-item', 'navbar-child-item');
+                    childDiv.innerHTML = `
+                        <p><strong>Text:</strong> <input type="text" data-id="${child.id}" data-field="itemText" value="${child.itemText}"></p>
+                        <p><strong>Href:</strong> <input type="text" data-id="${child.id}" data-field="itemHref" value="${child.itemHref}"></p>
+                        <p><strong>Order:</strong> <input type="number" data-id="${child.id}" data-field="displayOrder" value="${child.displayOrder}" min="1"></p>
+                        <p><strong>Dropdown:</strong> <input type="checkbox" data-id="${child.id}" data-field="isDropdown" ${child.isDropdown ? 'checked' : ''} disabled></p>
+                        <p><strong>Parent ID:</strong> <input type="number" data-id="${child.id}" data-field="parentId" value="${child.parentId}" disabled></p>
+                        <div class="item-actions">
+                            <button class="btn btn-secondary btn-small delete-navbar-btn" data-id="${child.id}">Delete</button>
+                        </div>
+                    `;
+                    childrenDiv.appendChild(childDiv);
+                });
+                navbarList.appendChild(childrenDiv);
+            }
+        });
+
+        // Attach event listeners for input changes and delete buttons
+        navbarList.querySelectorAll('input[type="text"], input[type="number"], input[type="checkbox"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                const field = e.target.dataset.field;
+                let value;
+                if (e.target.type === 'checkbox') {
+                    value = e.target.checked;
+                } else if (e.target.type === 'number') {
+                    value = parseInt(e.target.value);
+                } else {
+                    value = e.target.value;
+                }
+
+                // Update the local data model
+                const itemToUpdate = navbarItemsData.find(item => item.id === id);
+                if (itemToUpdate) {
+                    itemToUpdate[field] = value;
+                }
+            });
+        });
+
+        navbarList.querySelectorAll('.delete-navbar-btn').forEach(button => {
+            button.addEventListener('click', (e) => deleteNavbarItem(e.target.dataset.id));
         });
     }
 
@@ -703,95 +773,64 @@ document.addEventListener('DOMContentLoaded', () => {
         navbarMessage.style.display = 'none';
         navbarMessage.classList.remove('success', 'error');
 
-        const inputs = navbarList.querySelectorAll('.navbar-input');
-        const updates = [];
-
-        // Collect all current values from inputs
-        const currentNavbarValues = {};
-        inputs.forEach(input => {
-            const id = input.dataset.id;
-            const key = input.dataset.key;
-            if (!currentNavbarValues[id]) {
-                currentNavbarValues[id] = { id: parseInt(id) };
-            }
-            if (input.type === 'checkbox') {
-                currentNavbarValues[id][key] = input.checked;
-            } else if (input.type === 'number') {
-                currentNavbarValues[id][key] = parseInt(input.value);
-            }
-            else {
-                currentNavbarValues[id][key] = input.value;
-            }
-        });
-
-        // Compare with original fetched data to find changes
-        // Flatten original data for easier comparison
-        const flatOriginalNavbarData = {};
-        const flattenNavbar = (items) => {
-            items.forEach(item => {
-                flatOriginalNavbarData[item.id] = { ...item };
-                delete flatOriginalNavbarData[item.id].children; // Remove children for comparison
-                if (item.children) {
-                    flattenNavbar(item.children);
-                }
-            });
-        };
-        flattenNavbar(navbarItemsData); // Populate flatOriginalNavbarData
-
-        for (const id in currentNavbarValues) {
-            const currentItem = currentNavbarValues[id];
-            const originalItem = flatOriginalNavbarData[id];
-
-            let itemChanged = false;
-            for (const key in currentItem) {
-                if (key !== 'id' && currentItem[key] !== originalItem[key]) {
-                    itemChanged = true;
-                    break;
-                }
-            }
-
-            if (itemChanged) {
-                updates.push(currentItem);
-            }
-        }
-
-        if (updates.length === 0) {
-            navbarMessage.textContent = 'No changes to save.';
-            navbarMessage.classList.add('success');
-            navbarMessage.style.display = 'block';
-            return;
-        }
-
         try {
-            for (const update of updates) {
-                const response = await fetch(`${API_BASE_URL}/admin/navbar`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(update)
-                });
+            // Send the entire updated navbarItemsData array
+            const response = await fetch(`${API_BASE_URL}/admin/navbar`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(navbarItemsData)
+            });
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`Failed to update Navbar item ID ${update.id}: ${errorData.message || response.statusText}`);
-                }
+            const result = await response.json();
+
+            if (response.ok) {
+                navbarMessage.textContent = result.message;
+                navbarMessage.classList.add('success');
+                fetchNavbarItems(); // Re-fetch to ensure local data is in sync
+            } else {
+                navbarMessage.textContent = result.message || `Failed to save navbar items.`;
+                navbarMessage.classList.add('error');
             }
-            navbarMessage.textContent = 'All Navbar changes saved successfully!';
-            navbarMessage.classList.add('success');
-            fetchNavbarItems(); // Re-fetch to ensure local data is in sync
         } catch (error) {
-            console.error('Error saving Navbar items:', error);
-            navbarMessage.textContent = `Error saving Navbar items: ${error.message}`;
+            console.error('Error saving navbar items:', error);
+            navbarMessage.textContent = `An error occurred while saving navbar items: ${error.message}`;
             navbarMessage.classList.add('error');
         } finally {
             navbarMessage.style.display = 'block';
         }
     });
 
-
-    // --- Form Submissions Logic (Existing) ---
-    async function fetchContactMessages() {
+    async function deleteNavbarItem(id) {
+        if (!confirm(`Are you sure you want to delete this navbar item? This will also delete its children.`)) {
+            return;
+        }
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/contact-messages`);
+            const response = await fetch(`${API_BASE_URL}/admin/navbar`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: parseInt(id) })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                fetchNavbarItems(); // Re-fetch list
+            } else {
+                alert(result.message || `Failed to delete navbar item.`);
+            }
+        } catch (error) {
+                console.error('Delete navbar item error:', error);
+                alert('An error occurred during navbar item deletion.');
+        }
+    }
+
+
+    // --- Form Submissions Logic ---
+    async function fetchContactMessages() {
+        contactMessagesList.innerHTML = '<p>Loading contact messages...</p>';
+        try {
+            const response = await fetch(`${API_BASE_URL}/admin/submissions/contact`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -804,7 +843,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderContactMessages(messages) {
-        contactMessagesList.innerHTML = ''; // Clear existing
+        contactMessagesList.innerHTML = '';
         if (messages.length === 0) {
             contactMessagesList.innerHTML = '<p>No contact messages found.</p>';
             return;
@@ -816,15 +855,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p><strong>Name:</strong> ${msg.name}</p>
                 <p><strong>Email:</strong> ${msg.email}</p>
                 <p><strong>Message:</strong> ${msg.message}</p>
-                <p class="timestamp">Submitted: ${new Date(msg.submissionTime).toLocaleString()}</p>
+                <p><strong>Submitted:</strong> ${new Date(msg.submissionTime).toLocaleString()}</p>
             `;
             contactMessagesList.appendChild(itemDiv);
         });
     }
 
     async function fetchDemoRequests() {
+        demoRequestsList.innerHTML = '<p>Loading demo requests...</p>';
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/demo-requests`);
+            const response = await fetch(`${API_BASE_URL}/admin/submissions/demo`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -837,7 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderDemoRequests(requests) {
-        demoRequestsList.innerHTML = ''; // Clear existing
+        demoRequestsList.innerHTML = '';
         if (requests.length === 0) {
             demoRequestsList.innerHTML = '<p>No demo requests found.</p>';
             return;
@@ -848,35 +888,14 @@ document.addEventListener('DOMContentLoaded', () => {
             itemDiv.innerHTML = `
                 <p><strong>Full Name:</strong> ${req.fullName}</p>
                 <p><strong>Phone:</strong> ${req.phoneNumber || 'N/A'}</p>
-                <p><strong>Company:</strong> ${req.company || 'N/A'}</p>
+                <p><strong>Company:</strong> ${req.company}</p>
                 <p><strong>Email:</strong> ${req.email}</p>
+                <p><strong>Comments:</strong> ${req.comments || 'N/A'}</p>
                 <p><strong>Demo Date:</strong> ${req.demoDate || 'N/A'}</p>
                 <p><strong>Demo Time:</strong> ${req.demoTime || 'N/A'}</p>
-                <p><strong>Comments:</strong> ${req.comments || 'N/A'}</p>
-                <p class="timestamp">Submitted: ${new Date(req.submissionTime).toLocaleString()}</p>
+                <p><strong>Submitted:</strong> ${new Date(req.submissionTime).toLocaleString()}</p>
             `;
             demoRequestsList.appendChild(itemDiv);
         });
-    }
-
-    // Helper functions for formatting keys
-    function formatSectionName(name) {
-        return name.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
-    }
-
-    function formatContentKey(key) {
-        return key.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
-    }
-
-    // Custom confirm dialog (replace browser's confirm)
-    // This is a placeholder. For a real app, implement a custom modal.
-    function confirm(message) {
-        return window.confirm(message); // Using window.confirm for now as a placeholder
-    }
-
-    // Custom alert dialog (replace browser's alert)
-    // This is a placeholder. For a real app, implement a custom modal.
-    function alert(message) {
-        window.alert(message); // Using window.alert for now as a placeholder
     }
 });
