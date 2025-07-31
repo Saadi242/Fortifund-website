@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="style.css">
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Flatpickr CSS for Date/Time Pickers -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
 
@@ -65,8 +67,9 @@
                     <p class="calendar-title" data-content-key="calendar_title">Select a Day and Time</p>
                     <!-- Added data-content-key="calendar_note" -->
                     <p class="calendar-note" data-content-key="calendar_note">A full interactive calendar integration would require a dedicated library or API. For this demo, please imagine a calendar widget here.</p>
-                    <input type="date" class="date-input" name="demoDate">
-                    <input type="time" class="time-input" name="demoTime">
+                    <!-- Updated input types to use IDs for Flatpickr -->
+                    <input type="text" id="demoDate" class="date-input" name="demoDate" placeholder="Select Date">
+                    <input type="text" id="demoTime" class="time-input" name="demoTime" placeholder="Select Time">
                 </div>
                 <button type="submit" class="btn btn-primary full-width-btn">Schedule Demo</button>
             </form>
@@ -86,7 +89,11 @@
     </div>
 </footer>
 
-<!-- Custom JavaScript -->
+<!-- Flatpickr JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- General Custom JavaScript (for navigation, etc.) -->
 <script src="script.js"></script>
+<!-- Specific Custom JavaScript for the Book Demo page -->
+<script src="book-demo.js"></script>
 </body>
 </html>

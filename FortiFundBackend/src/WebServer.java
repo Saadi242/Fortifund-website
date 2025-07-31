@@ -8,16 +8,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import controllers.NavbarHandler;
 import controllers.FaqHandler;
 import controllers.ContentHandler;
-import controllers.FormHandler;
-// import controllers.ContentUpdateHandler; // This is likely redundant now
+import controllers.FormHandler; // Ensure this is correctly imported
 import controllers.AuthHandler;
 import controllers.AdminContentHandler;
 import controllers.AdminFormsHandler;
 import controllers.AssetHandler;
 import controllers.AdminFaqHandler;
-import controllers.AdminNavbarHandler; // NEW: Import AdminNavbarHandler
+import controllers.AdminNavbarHandler; // Import AdminNavbarHandler
 
-import db.DBManager;
+import db.DBManager; // Import DBManager
 
 public class WebServer {
 
@@ -26,7 +25,7 @@ public class WebServer {
         HttpServer server = null;
 
         try {
-            DBManager.init();
+            DBManager.init(); // Assuming DBManager.init() is the correct initialization method
             System.out.println("DBManager initialized. MySQL JDBC Driver loaded.");
 
             server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -37,20 +36,20 @@ public class WebServer {
             server.createContext("/api/content/navbar-items", new NavbarHandler());
             server.createContext("/api/content/faq-items", new FaqHandler());
             server.createContext("/api/content/text-content", new ContentHandler());
-            server.createContext("/api/content/image-assets", new ContentHandler());
-            server.createContext("/api/content/video-assets", new ContentHandler());
+            server.createContext("/api/content/image-assets", new AssetHandler()); // Corrected to AssetHandler
+            server.createContext("/api/content/video-assets", new AssetHandler()); // Corrected to AssetHandler
             server.createContext("/api/submit/contact", new FormHandler());
             server.createContext("/api/submit/demo", new FormHandler());
 
             // Admin API Endpoints
             server.createContext("/api/admin/login", new AuthHandler());
             server.createContext("/api/admin/content", new AdminContentHandler());
-            server.createContext("/api/admin/contact-messages", new AdminFormsHandler());
-            server.createContext("/api/admin/demo-requests", new AdminFormsHandler());
+            // Corrected path for AdminFormsHandler to match frontend requests
+            server.createContext("/api/admin/submissions", new AdminFormsHandler());
             server.createContext("/api/admin/assets/image", new AssetHandler());
             server.createContext("/api/admin/assets/video", new AssetHandler());
             server.createContext("/api/admin/faqs", new AdminFaqHandler());
-            server.createContext("/api/admin/navbar", new AdminNavbarHandler()); // NEW: Register AdminNavbarHandler
+            server.createContext("/api/admin/navbar", new AdminNavbarHandler());
 
 
             server.start();
@@ -63,7 +62,7 @@ public class WebServer {
             System.err.println("Error during server initialization or DBManager init: " + e.getMessage());
             e.printStackTrace();
         } finally {
-            // Server runs continuously
+            // Server runs continuously, so no explicit finally block for closing server is needed here
         }
     }
 }

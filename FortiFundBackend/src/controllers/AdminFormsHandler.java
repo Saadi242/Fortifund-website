@@ -2,9 +2,9 @@ package controllers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import db.DBManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import db.DBManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,26 +19,29 @@ public class AdminFormsHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         // Set CORS headers
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "http://localhost:63342"); // Explicitly allow your frontend origin
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS"); // Only GET for fetching, OPTIONS for preflight
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
 
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
             return;
         }
 
+        String path = exchange.getRequestURI().getPath();
+        // The path should start with /api/admin/submissions
+        // We'll check for specific endpoints like /contact or /demo after that
         if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
-            String path = exchange.getRequestURI().getPath();
-            if (path.equals("/api/admin/contact-messages")) {
+            if (path.equals("/api/admin/submissions/contact")) { // Use .equals for exact match
                 handleGetContactMessages(exchange);
-            } else if (path.equals("/api/admin/demo-requests")) {
+            } else if (path.equals("/api/admin/submissions/demo")) { // Use .equals for exact match
                 handleGetDemoRequests(exchange);
             } else {
-                sendResponse(exchange, 404, "Not Found");
+                sendResponse(exchange, 404, "{\"message\": \"Not Found: Specific submission type not found.\"}");
             }
         } else {
-            sendResponse(exchange, 405, "Method Not Allowed");
+            sendResponse(exchange, 405, "{\"message\": \"Method Not Allowed\"}");
         }
     }
 
@@ -60,7 +63,7 @@ public class AdminFormsHandler implements HttpHandler {
                 jsonItem.put("name", rs.getString("name"));
                 jsonItem.put("email", rs.getString("email"));
                 jsonItem.put("message", rs.getString("message"));
-                jsonItem.put("submissionTime", rs.getTimestamp("submission_time").toString());
+                jsonItem.put("submissionTime", rs.getTimestamp("submission_time").getTime()); // Send as timestamp
                 jsonArray.put(jsonItem);
             }
 
@@ -69,7 +72,7 @@ public class AdminFormsHandler implements HttpHandler {
         } catch (SQLException e) {
             System.err.println("Database error fetching contact messages: " + e.getMessage());
             e.printStackTrace();
-            sendResponse(exchange, 500, "Internal Server Error: Database access failed.");
+            sendResponse(exchange, 500, "{\"message\": \"Internal Server Error: Database access failed.\"}");
         } finally {
             DBManager.close(rs, ps, conn);
         }
@@ -95,9 +98,9 @@ public class AdminFormsHandler implements HttpHandler {
                 jsonItem.put("company", rs.getString("company"));
                 jsonItem.put("email", rs.getString("email"));
                 jsonItem.put("comments", rs.getString("comments"));
-                jsonItem.put("demoDate", rs.getDate("demo_date") != null ? rs.getDate("demo_date").toString() : null);
-                jsonItem.put("demoTime", rs.getTime("demo_time") != null ? rs.getTime("demo_time").toString() : null);
-                jsonItem.put("submissionTime", rs.getTimestamp("submission_time").toString());
+                jsonItem.put("demoDate", rs.getDate("demo_date") != null ? rs.getDate("demo_date").toString() : JSONObject.NULL);
+                jsonItem.put("demoTime", rs.getTime("demo_time") != null ? rs.getTime("demo_time").toString() : JSONObject.NULL);
+                jsonItem.put("submissionTime", rs.getTimestamp("submission_time").getTime()); // Send as timestamp
                 jsonArray.put(jsonItem);
             }
 
@@ -106,7 +109,7 @@ public class AdminFormsHandler implements HttpHandler {
         } catch (SQLException e) {
             System.err.println("Database error fetching demo requests: " + e.getMessage());
             e.printStackTrace();
-            sendResponse(exchange, 500, "Internal Server Error: Database access failed.");
+            sendResponse(exchange, 500, "{\"message\": \"Internal Server Error: Database access failed.\"}");
         } finally {
             DBManager.close(rs, ps, conn);
         }

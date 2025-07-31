@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Text Content elements
     const contentEditor = document.getElementById('contentEditor');
-    // Removed global saveContentBtn
     const contentMessage = document.getElementById('contentMessage');
     let textContentData = {}; // To store fetched text content for editing
 
@@ -660,8 +659,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(result.message || `Failed to delete FAQ.`);
             }
         } catch (error) {
-                console.error('Delete FAQ error:', error);
-                alert('An error occurred during FAQ deletion.');
+            console.error('Delete FAQ error:', error);
+            alert('An error occurred during FAQ deletion.');
         }
     }
 
@@ -714,10 +713,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         rootItems.forEach(item => {
             const itemDiv = document.createElement('div');
-            itemDiv.classList.add('data-item', 'navbar-item', item.isDropdown ? 'dropdown-parent' : '');
+            itemDiv.classList.add('data-item', 'navbar-item'); // Always add base classes
+            if (item.isDropdown) { // Conditionally add 'dropdown-parent'
+                itemDiv.classList.add('dropdown-parent');
+            }
             itemDiv.innerHTML = `
-                <p><strong>Text:</strong> <input type="text" data-id="${item.id}" data-field="itemText" value="${item.itemText}"></p>
-                <p><strong>Href:</strong> <input type="text" data-id="${item.id}" data-field="itemHref" value="${item.itemHref}"></p>
+                <p><strong>Text:</strong> <input type="text" data-id="${item.id}" data-field="itemText" value="${item.itemText || ''}"></p>
+                <p><strong>Href:</strong> <input type="text" data-id="${item.id}" data-field="itemHref" value="${item.itemHref || ''}"></p>
                 <p><strong>Order:</strong> <input type="number" data-id="${item.id}" data-field="displayOrder" value="${item.displayOrder}" min="1"></p>
                 <p><strong>Dropdown:</strong> <input type="checkbox" data-id="${item.id}" data-field="isDropdown" ${item.isDropdown ? 'checked' : ''}></p>
                 <p><strong>Parent ID:</strong> <input type="number" data-id="${item.id}" data-field="parentId" value="${item.parentId !== null ? item.parentId : ''}" ${item.isDropdown ? 'disabled' : ''}></p>
@@ -734,8 +736,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const childDiv = document.createElement('div');
                     childDiv.classList.add('data-item', 'navbar-child-item');
                     childDiv.innerHTML = `
-                        <p><strong>Text:</strong> <input type="text" data-id="${child.id}" data-field="itemText" value="${child.itemText}"></p>
-                        <p><strong>Href:</strong> <input type="text" data-id="${child.id}" data-field="itemHref" value="${child.itemHref}"></p>
+                        <p><strong>Text:</strong> <input type="text" data-id="${child.id}" data-field="itemText" value="${child.itemText || ''}"></p>
+                        <p><strong>Href:</strong> <input type="text" data-id="${child.id}" data-field="itemHref" value="${child.itemHref || ''}"></p>
                         <p><strong>Order:</strong> <input type="number" data-id="${child.id}" data-field="displayOrder" value="${child.displayOrder}" min="1"></p>
                         <p><strong>Dropdown:</strong> <input type="checkbox" data-id="${child.id}" data-field="isDropdown" ${child.isDropdown ? 'checked' : ''} disabled></p>
                         <p><strong>Parent ID:</strong> <input type="number" data-id="${child.id}" data-field="parentId" value="${child.parentId}" disabled></p>
