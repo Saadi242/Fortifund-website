@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS fortifund_db;
 -- Use the created database
 USE fortifund_db;
 
